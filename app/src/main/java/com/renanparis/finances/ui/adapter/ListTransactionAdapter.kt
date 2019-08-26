@@ -8,6 +8,7 @@ import android.widget.BaseAdapter
 import com.renanparis.finances.R
 import com.renanparis.finances.model.Transaction
 import kotlinx.android.synthetic.main.transacao_item.view.*
+import java.text.SimpleDateFormat
 
 class ListTransactionAdapter(
     private val transactions: List<Transaction>,
@@ -20,7 +21,13 @@ class ListTransactionAdapter(
             .inflate(R.layout.transacao_item, parent, false)
         val transaction = transactions[position]
 
-        createdView.transacao_valor.text = transaction.getValue().toString()
+        createdView.transacao_valor.text = transaction.value.toString()
+        createdView.transacao_categoria.text = transaction.category
+
+        val formatBr = "dd/MM/yyyy"
+        val format = SimpleDateFormat(formatBr)
+        val dateFormated = format.format(transaction.date.time)
+        createdView.transacao_data.text = dateFormated
         return createdView
     }
 
