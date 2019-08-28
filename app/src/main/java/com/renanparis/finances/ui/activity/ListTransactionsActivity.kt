@@ -17,7 +17,7 @@ class ListTransactionsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_lista_transacoes)
         val transactions = listOf(
             Transaction(value = BigDecimal(20.5), type = Type.EXPENSES),
-            Transaction(BigDecimal(100.0), "Imposto", Type.REVENUE),
+            Transaction(BigDecimal(100.0), "Venda de Fábrica de Ração", Type.REVENUE),
             Transaction(value = BigDecimal(5.0), type = Type.EXPENSES),
             Transaction(value = BigDecimal(50.0), category = "Venda", type = Type.REVENUE)
         )
