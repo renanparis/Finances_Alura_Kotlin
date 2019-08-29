@@ -27,33 +27,69 @@ class ListTransactionAdapter(
             .inflate(R.layout.transacao_item, parent, false)
         val transaction = transactions[position]
 
-        if (transaction.type == Type.EXPENSES) {
-            createdView.transacao_valor.setTextColor(
-                ContextCompat.getColor(
-                    context,
-                    R.color.despesa
-                )
-            )
-            createdView.transacao_icone.setBackgroundResource(R.drawable.icone_transacao_item_despesa)
-        } else {
-            createdView.transacao_valor.setTextColor(
-                ContextCompat.getColor(
-                    context,
-                    R.color.receita
-                )
-            )
-            createdView.transacao_icone
-                .setBackgroundResource(R.drawable.icone_transacao_item_receita)
-        }
+        addValue(transaction, createdView)
+        addIcon(transaction, createdView)
+        addCategory(createdView, transaction)
+        addDate(transaction)
+        createdView.transacao_icone.setBackgroundResource(R.drawable.icone_transacao_item_despesa)
 
 
+        return createdView
+    }
 
+    private fun addDate(transaction: Transaction) {
+        transaction.date.formatToBR()
+    }
+
+    private fun addCategory(
+        createdView: View,
+        transaction: Transaction
+    ) {
+        createdView.transacao_categoria.text = transaction.category.limitsStringOnUntil(
+            limitCategory
+        )
+    }
+
+    private fun addValue(
+        transaction: Transaction,
+        createdView: View
+    ) {
+        val cor: Int = colorBy(transaction.type)
+        createdView.transacao_valor.setTextColor(cor)
         createdView.transacao_valor.text =
             transaction.value.formatToBrCurrency()
-        createdView.transacao_categoria.text = transaction.category.limitsStringOnUntil(
-            limitCategory)
-            transaction.date.formatToBR()
-        return createdView
+    }
+
+    private fun colorBy(type: Type): Int {
+
+        if (type == Type.EXPENSES) {
+
+            return ContextCompat.getColor(
+                context,
+                R.color.despesa
+            )
+        }
+        return ContextCompat.getColor(
+            context,
+            R.color.receita
+        )
+    }
+
+    private fun addIcon(transaction: Transaction, createdView: View){
+
+        val icon: Int = iconBy(transaction.type)
+        createdView.transacao_icone
+            .setBackgroundResource(icon)
+    }
+
+    private fun iconBy(type: Type): Int {
+        if (type == Type.EXPENSES) {
+
+            return R.drawable.icone_transacao_item_despesa
+
+        }
+        return R.drawable.icone_transacao_item_receita
+
     }
 
     override fun getItem(position: Int): Transaction {
@@ -69,4 +105,5 @@ class ListTransactionAdapter(
         return transactions.size
     }
 
+   
 }
