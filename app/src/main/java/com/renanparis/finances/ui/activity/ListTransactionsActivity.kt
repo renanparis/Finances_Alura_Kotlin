@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.renanparis.finances.R
 import com.renanparis.finances.model.Transaction
 import com.renanparis.finances.model.Type
+import com.renanparis.finances.ui.ViewResume
 import com.renanparis.finances.ui.adapter.ListTransactionAdapter
 import kotlinx.android.synthetic.main.activity_lista_transacoes.*
 import java.math.BigDecimal
@@ -16,7 +17,18 @@ class ListTransactionsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_lista_transacoes)
         val transactions: List<Transaction> = listTransactionsExample()
         configAdapter(transactions)
+        configViewResume(transactions)
+
     }
+
+    private fun configViewResume(transactions: List<Transaction>) {
+        val view = window.decorView
+        val viewResume = ViewResume(view, transactions)
+        viewResume.addRevenueOnResume()
+        viewResume.addExpensesOnResume()
+        viewResume.addTotalValueOnresume()
+    }
+
 
     private fun configAdapter(transactions: List<Transaction>) {
         val arrayAdapter = ListTransactionAdapter(transactions, this)

@@ -105,5 +105,5 @@ class ListTransactionAdapter(
         return transactions.size
     }
 
-   
+
 }
