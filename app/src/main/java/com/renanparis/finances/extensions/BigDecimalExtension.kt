@@ -8,6 +8,7 @@ fun BigDecimal.formatToBrCurrency(): String {
 
     val numberFormat = DecimalFormat.getCurrencyInstance(Locale("pt", "br"))
 
-    return numberFormat.format(this).replace("R$", "R$ ")
+    return numberFormat.format(this).replace("R$", "R$ ").
+            replace("-R$ ", "R$ -")
 
 }

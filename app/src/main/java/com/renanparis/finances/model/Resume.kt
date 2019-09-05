@@ -4,32 +4,17 @@ import java.math.BigDecimal
 
 class Resume(private val transactions: List<Transaction>) {
 
-    fun revenue(): BigDecimal {
+    val revenue get() = sumBy(Type.REVENUE)
 
-        var transactionRevenue = BigDecimal.ZERO
-        for (transaction in transactions) {
-            if (transaction.type == Type.REVENUE) {
-                transactionRevenue = transactionRevenue.plus(transaction.value)
+    val expenses get() = sumBy(Type.EXPENSES)
 
-            }
-        }
+    val totalValue get() = revenue.subtract(expenses)
 
-        return transactionRevenue
-    }
+    fun sumBy(type: Type): BigDecimal {
 
-    fun expenses(): BigDecimal {
+        val sumTransactionsByType = transactions.filter { it.type == type}
+            .sumByDouble {it.value.toDouble() }
 
-        var transactionExpenses = BigDecimal.ZERO
-        for (transaction in transactions) {
-            if (transaction.type == Type.EXPENSES) {
-                transactionExpenses = transactionExpenses.plus(transaction.value)
-            }
-        }
-        return transactionExpenses
-    }
-
-    fun totalValue () : BigDecimal{
-
-        return revenue().subtract(expenses())
+        return BigDecimal(sumTransactionsByType)
     }
 }
