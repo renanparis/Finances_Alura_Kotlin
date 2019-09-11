@@ -31,7 +31,6 @@ class ListTransactionAdapter(
         addIcon(transaction, createdView)
         addCategory(createdView, transaction)
         addDate(transaction)
-        createdView.transacao_icone.setBackgroundResource(R.drawable.icone_transacao_item_despesa)
 
 
         return createdView
