@@ -20,33 +20,37 @@ import java.math.BigDecimal
 import java.util.*
 
 @Suppress("MoveLambdaOutsideParentheses")
-class InsertFormRevenueDialog(
+class InsertTransactionDialog(
     private val viewGroup: ViewGroup,
     private val context: Context
 ) {
 
     private val viewCreated = createLayout()
+    private val fieldValue = viewCreated.form_transacao_valor
+    private val fieldDate = viewCreated.form_transacao_data
+    private val fieldCategory = viewCreated.form_transacao_categoria
 
-    fun configDialog(transactionDelegate: TransactionDelegate) {
+    fun configDialog(type: Type, transactionDelegate: TransactionDelegate) {
 
         configFieldDate()
-        configFieldCategory()
-        configFormRevenue(transactionDelegate)
+        configFieldCategory(type)
+        configFormRevenue(type, transactionDelegate)
     }
 
-    private fun configFormRevenue(transactionDelegate: TransactionDelegate) {
+    private fun configFormRevenue(type: Type, transactionDelegate: TransactionDelegate) {
+        val title = titleBy(type)
 
         AlertDialog.Builder(context)
-            .setTitle(R.string.adiciona_receita)
+            .setTitle(title)
             .setView(viewCreated)
             .setPositiveButton("Adicionar", { _: DialogInterface, _: Int ->
-                val valueText = viewCreated.form_transacao_valor.text.toString()
+                val valueText = fieldValue.text.toString()
                 val value = convertToBigDecimal(valueText)
-                val dateText = viewCreated.form_transacao_data.text.toString()
+                val dateText = fieldDate.text.toString()
                 val date = dateText.convertToCalendar()
-                val category = viewCreated.form_transacao_categoria.selectedItem.toString()
+                val category = fieldCategory.selectedItem.toString()
                 val transaction = Transaction(
-                    type = Type.REVENUE,
+                    type = type,
                     value = value,
                     date = date,
                     category = category
@@ -55,6 +59,15 @@ class InsertFormRevenueDialog(
             })
             .setNegativeButton("Cancelar", null)
             .show()
+    }
+
+    private fun titleBy(type: Type): Int {
+
+        if (type == Type.REVENUE) {
+            return R.string.adiciona_receita
+        }
+
+        return R.string.adiciona_despesa
     }
 
 
@@ -71,13 +84,23 @@ class InsertFormRevenueDialog(
         }
     }
 
-    private fun configFieldCategory() {
+    private fun configFieldCategory(type: Type) {
+
+        val category = categoryBy(type)
+
         val adapter = ArrayAdapter.createFromResource(
             context,
-            R.array.categorias_de_receita, android.R.layout.simple_spinner_dropdown_item
+            category, android.R.layout.simple_spinner_dropdown_item
         )
 
-        viewCreated.form_transacao_categoria.adapter = adapter
+        fieldCategory.adapter = adapter
+    }
+
+    private fun categoryBy(type: Type): Int {
+        if (type == Type.REVENUE) {
+          return  R.array.categorias_de_receita
+        }
+         return   R.array.categorias_de_despesa
     }
 
     private fun configFieldDate() {
@@ -87,18 +110,18 @@ class InsertFormRevenueDialog(
         val month = today.get(Calendar.MONTH)
         val day = today.get(Calendar.DAY_OF_MONTH)
 
-        viewCreated.form_transacao_data.setText(today.formatToBR())
+        fieldDate.setText(today.formatToBR())
 
-        viewCreated.form_transacao_data.setOnClickListener {
+        fieldDate.setOnClickListener {
             DatePickerDialog(
                 context,
-                DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
+                 { _, year, month, dayOfMonth ->
 
                     val dateSelected = Calendar.getInstance()
 
                     dateSelected.set(year, month, dayOfMonth)
 
-                    viewCreated.form_transacao_data.setText(dateSelected.formatToBR())
+                    fieldDate.setText(dateSelected.formatToBR())
 
                 }, year, month, day
             ).show()
