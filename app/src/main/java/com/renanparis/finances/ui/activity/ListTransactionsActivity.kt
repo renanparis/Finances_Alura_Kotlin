@@ -17,6 +17,7 @@ import kotlinx.android.synthetic.main.activity_lista_transacoes.*
 class ListTransactionsActivity : AppCompatActivity() {
 
     private val transactions: MutableList<Transaction> = mutableListOf()
+    private val viewActivity = window.decorView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,15 +41,19 @@ class ListTransactionsActivity : AppCompatActivity() {
 
     private fun showTransactionDialog(type: Type) {
 
-        InsertTransactionDialog(window.decorView as ViewGroup, this)
+        InsertTransactionDialog(viewActivity as ViewGroup, this)
             .showInsertDialog(type, object : TransactionDelegate {
                 override fun delegate(transaction: Transaction) {
-                    transactions.add(transaction)
-                    updateTransactions()
+                    add(transaction)
                     lista_transacoes_adiciona_menu.close(true)
                 }
 
             })
+    }
+
+    private fun add(transaction: Transaction) {
+        transactions.add(transaction)
+        updateTransactions()
     }
 
     private fun updateTransactions() {
@@ -57,7 +62,7 @@ class ListTransactionsActivity : AppCompatActivity() {
     }
 
     private fun configViewResume() {
-        val view = window.decorView
+        val view = viewActivity
         val viewResume = ViewResume(view, this.transactions, this)
         viewResume.updateResumeView()
     }
@@ -65,17 +70,31 @@ class ListTransactionsActivity : AppCompatActivity() {
 
     private fun configAdapter() {
         val arrayAdapter = ListTransactionAdapter(this.transactions, this)
-        lista_transacoes_listview.adapter = arrayAdapter
-        lista_transacoes_listview.setOnItemClickListener { parent, view, position, id -> 
-            val transactionClicked = transactions[position]
-            UpdateTransactionDialog(window.decorView as ViewGroup, this)
-                .showUpdateDialog(transactionClicked, object : TransactionDelegate{
-                    override fun delegate(transaction: Transaction) {
-                        transactions[position] = transaction
-                        updateTransactions()
-                    }
-                })
+        with(lista_transacoes_listview) {
+            adapter = arrayAdapter
+            setOnItemClickListener { _, _, position, _ ->
+                val transactionClicked = transactions[position]
+                showUpdateTransactionDialog(transactionClicked, position)
+            }
         }
+
+    }
+
+    private fun showUpdateTransactionDialog(
+        transactionClicked: Transaction,
+        position: Int
+    ) {
+        UpdateTransactionDialog(viewActivity as ViewGroup, this)
+            .showUpdateDialog(transactionClicked, object : TransactionDelegate {
+                override fun delegate(transaction: Transaction) {
+                    update(transaction, position)
+                }
+            })
+    }
+
+    private fun update(transaction: Transaction, position: Int) {
+        transactions[position] = transaction
+        updateTransactions()
     }
 
 }
