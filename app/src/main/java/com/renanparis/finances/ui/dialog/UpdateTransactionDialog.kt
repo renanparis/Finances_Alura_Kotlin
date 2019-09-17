@@ -20,7 +20,7 @@ import java.math.BigDecimal
 import java.util.*
 
 @Suppress("MoveLambdaOutsideParentheses")
-class InsertTransactionDialog(
+class UpdateTransactionDialog(
     private val viewGroup: ViewGroup,
     private val context: Context
 ) {
@@ -30,20 +30,27 @@ class InsertTransactionDialog(
     private val fieldDate = viewCreated.form_transacao_data
     private val fieldCategory = viewCreated.form_transacao_categoria
 
-    fun showInsertDialog(type: Type, transactionDelegate: TransactionDelegate) {
+    fun showUpdateDialog(transaction: Transaction, transactionDelegate: TransactionDelegate) {
+        val type = transaction.type
 
         configFieldDate()
         configFieldCategory(type)
-        configFormDialog(type, transactionDelegate)
+        configForm(type, transactionDelegate)
+
+        fieldValue.setText(transaction.value.toString())
+        fieldDate.setText(transaction.date.formatToBR())
+        val categoriesReturned = context.resources.getStringArray(categoryBy(type))
+        val categoryPosition = categoriesReturned.indexOf(transaction.category)
+        fieldCategory.setSelection(categoryPosition, true)
     }
 
-    private fun configFormDialog(type: Type, transactionDelegate: TransactionDelegate) {
+    private fun configForm(type: Type, transactionDelegate: TransactionDelegate) {
         val title = titleBy(type)
 
         AlertDialog.Builder(context)
             .setTitle(title)
             .setView(viewCreated)
-            .setPositiveButton("Adicionar", { _: DialogInterface, _: Int ->
+            .setPositiveButton("Alterar", { _: DialogInterface, _: Int ->
                 val valueText = fieldValue.text.toString()
                 val value = convertToBigDecimal(valueText)
                 val dateText = fieldDate.text.toString()
@@ -64,10 +71,10 @@ class InsertTransactionDialog(
     private fun titleBy(type: Type): Int {
 
         if (type == Type.REVENUE) {
-            return R.string.adiciona_receita
+            return R.string.altera_receita
         }
 
-        return R.string.adiciona_despesa
+        return R.string.altera_despesa
     }
 
 

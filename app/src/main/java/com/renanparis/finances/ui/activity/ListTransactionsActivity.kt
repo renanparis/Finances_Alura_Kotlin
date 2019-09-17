@@ -10,6 +10,7 @@ import com.renanparis.finances.model.Type
 import com.renanparis.finances.ui.ViewResume
 import com.renanparis.finances.ui.adapter.ListTransactionAdapter
 import com.renanparis.finances.ui.dialog.InsertTransactionDialog
+import com.renanparis.finances.ui.dialog.UpdateTransactionDialog
 import kotlinx.android.synthetic.main.activity_lista_transacoes.*
 
 @Suppress("MoveLambdaOutsideParentheses")
@@ -40,17 +41,17 @@ class ListTransactionsActivity : AppCompatActivity() {
     private fun showTransactionDialog(type: Type) {
 
         InsertTransactionDialog(window.decorView as ViewGroup, this)
-            .configDialog(type, object : TransactionDelegate {
+            .showInsertDialog(type, object : TransactionDelegate {
                 override fun delegate(transaction: Transaction) {
-                    updateTransactions(transaction)
+                    transactions.add(transaction)
+                    updateTransactions()
                     lista_transacoes_adiciona_menu.close(true)
                 }
 
             })
     }
 
-    private fun updateTransactions(transaction: Transaction) {
-        transactions.add(transaction)
+    private fun updateTransactions() {
         configViewResume()
         configAdapter()
     }
@@ -65,6 +66,16 @@ class ListTransactionsActivity : AppCompatActivity() {
     private fun configAdapter() {
         val arrayAdapter = ListTransactionAdapter(this.transactions, this)
         lista_transacoes_listview.adapter = arrayAdapter
+        lista_transacoes_listview.setOnItemClickListener { parent, view, position, id -> 
+            val transactionClicked = transactions[position]
+            UpdateTransactionDialog(window.decorView as ViewGroup, this)
+                .showUpdateDialog(transactionClicked, object : TransactionDelegate{
+                    override fun delegate(transaction: Transaction) {
+                        transactions[position] = transaction
+                        updateTransactions()
+                    }
+                })
+        }
     }
 
 }
