@@ -17,7 +17,14 @@ import kotlinx.android.synthetic.main.activity_lista_transacoes.*
 class ListTransactionsActivity : AppCompatActivity() {
 
     private val transactions: MutableList<Transaction> = mutableListOf()
-    private val viewActivity = window.decorView
+    private val viewActivity by lazy {
+        window.decorView
+
+    }
+
+    private val viewGroupActivity by lazy {
+        viewActivity as ViewGroup
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,8 +48,8 @@ class ListTransactionsActivity : AppCompatActivity() {
 
     private fun showTransactionDialog(type: Type) {
 
-        InsertTransactionDialog(viewActivity as ViewGroup, this)
-            .showInsertDialog(type, object : TransactionDelegate {
+        InsertTransactionDialog(viewGroupActivity, this)
+            .showDialog(type, object : TransactionDelegate {
                 override fun delegate(transaction: Transaction) {
                     add(transaction)
                     lista_transacoes_adiciona_menu.close(true)
@@ -84,7 +91,7 @@ class ListTransactionsActivity : AppCompatActivity() {
         transactionClicked: Transaction,
         position: Int
     ) {
-        UpdateTransactionDialog(viewActivity as ViewGroup, this)
+        UpdateTransactionDialog(viewGroupActivity, this)
             .showUpdateDialog(transactionClicked, object : TransactionDelegate {
                 override fun delegate(transaction: Transaction) {
                     update(transaction, position)
