@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import com.renanparis.finances.R
-import com.renanparis.finances.delegate.TransactionDelegate
 import com.renanparis.finances.model.Transaction
 import com.renanparis.finances.model.Type
 import com.renanparis.finances.ui.ViewResume
@@ -49,13 +48,9 @@ class ListTransactionsActivity : AppCompatActivity() {
     private fun showTransactionDialog(type: Type) {
 
         InsertTransactionDialog(viewGroupActivity, this)
-            .showDialog(type, object : TransactionDelegate {
-                override fun delegate(transaction: Transaction) {
-                    add(transaction)
-                    lista_transacoes_adiciona_menu.close(true)
-                }
-
-            })
+            .showDialog(type) { createdTransaction ->
+                add(createdTransaction)
+            }
     }
 
     private fun add(transaction: Transaction) {
@@ -92,11 +87,9 @@ class ListTransactionsActivity : AppCompatActivity() {
         position: Int
     ) {
         UpdateTransactionDialog(viewGroupActivity, this)
-            .showUpdateDialog(transactionClicked, object : TransactionDelegate {
-                override fun delegate(transaction: Transaction) {
-                    update(transaction, position)
-                }
-            })
+            .showUpdateDialog(transactionClicked) { updatedTransaction ->
+                update(updatedTransaction, position)
+            }
     }
 
     private fun update(transaction: Transaction, position: Int) {

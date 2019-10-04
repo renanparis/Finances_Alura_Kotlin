@@ -3,7 +3,6 @@ package com.renanparis.finances.ui.dialog
 import android.content.Context
 import android.view.ViewGroup
 import com.renanparis.finances.R
-import com.renanparis.finances.delegate.TransactionDelegate
 import com.renanparis.finances.extensions.formatToBR
 import com.renanparis.finances.model.Transaction
 import com.renanparis.finances.model.Type
@@ -24,9 +23,9 @@ class UpdateTransactionDialog(
         return R.string.altera_despesa
     }
 
-    fun showUpdateDialog(transaction: Transaction, transactionDelegate: TransactionDelegate) {
+    fun showUpdateDialog(transaction: Transaction, delegate: (transaction: Transaction) -> Unit) {
         val type = transaction.type
-        super.showDialog(type, transactionDelegate)
+        super.showDialog(type, delegate)
         initializeFields(transaction)
     }
 

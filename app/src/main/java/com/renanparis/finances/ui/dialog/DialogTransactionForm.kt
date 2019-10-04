@@ -12,7 +12,6 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.renanparis.finances.R
-import com.renanparis.finances.delegate.TransactionDelegate
 import com.renanparis.finances.extensions.convertToCalendar
 import com.renanparis.finances.extensions.formatToBR
 import com.renanparis.finances.model.Transaction
@@ -32,14 +31,14 @@ abstract class DialogTransactionForm(
     protected val fieldDate: EditText = viewCreated.form_transacao_data
     protected val fieldCategory: Spinner = viewCreated.form_transacao_categoria
     protected abstract val positiveButtonTitle : String
-    fun showDialog(type: Type, transactionDelegate: TransactionDelegate) {
+    fun showDialog(type: Type, delegate: (transaction: Transaction) -> Unit) {
 
         configFieldDate()
         configFieldCategory(type)
-        configFormDialog(type, transactionDelegate)
+        configFormDialog(type, delegate)
     }
 
-    private fun configFormDialog(type: Type, transactionDelegate: TransactionDelegate) {
+    private fun configFormDialog(type: Type, delegate: (transaction: Transaction) -> Unit) {
         val title = titleBy(type)
 
         AlertDialog.Builder(context)
@@ -57,7 +56,7 @@ abstract class DialogTransactionForm(
                     date = date,
                     category = category
                 )
-                transactionDelegate.delegate(transaction)
+                delegate(transaction)
             })
             .setNegativeButton("Cancelar", null)
             .show()
