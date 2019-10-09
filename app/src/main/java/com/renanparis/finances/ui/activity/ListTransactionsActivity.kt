@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.appcompat.app.AppCompatActivity
 import com.renanparis.finances.R
+import com.renanparis.finances.dao.TransactionDao
 import com.renanparis.finances.model.Transaction
 import com.renanparis.finances.model.Type
 import com.renanparis.finances.ui.ViewResume
@@ -18,7 +19,6 @@ import kotlinx.android.synthetic.main.activity_lista_transacoes.*
 @Suppress("MoveLambdaOutsideParentheses")
 class ListTransactionsActivity : AppCompatActivity() {
 
-    private val transactions: MutableList<Transaction> = mutableListOf()
     private val viewActivity by lazy {
         window.decorView
 
@@ -27,6 +27,9 @@ class ListTransactionsActivity : AppCompatActivity() {
     private val viewGroupActivity by lazy {
         viewActivity as ViewGroup
     }
+
+    private val dao = TransactionDao()
+    private val transactions = dao.transactions
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +60,7 @@ class ListTransactionsActivity : AppCompatActivity() {
     }
 
     private fun add(transaction: Transaction) {
-        transactions.add(transaction)
+        dao.add(transaction)
         updateTransactions()
     }
 
@@ -104,7 +107,7 @@ class ListTransactionsActivity : AppCompatActivity() {
     }
 
     private fun remove(position: Int) {
-        transactions.removeAt(position)
+        dao.remove(position)
         updateTransactions()
     }
 
@@ -119,7 +122,7 @@ class ListTransactionsActivity : AppCompatActivity() {
     }
 
     private fun update(transaction: Transaction, position: Int) {
-        transactions[position] = transaction
+        dao.update(transaction, position)
         updateTransactions()
     }
 
