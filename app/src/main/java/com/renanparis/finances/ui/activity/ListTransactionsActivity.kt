@@ -1,7 +1,10 @@
 package com.renanparis.finances.ui.activity
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.ViewGroup
+import android.widget.AdapterView
 import androidx.appcompat.app.AppCompatActivity
 import com.renanparis.finances.R
 import com.renanparis.finances.model.Transaction
@@ -78,8 +81,31 @@ class ListTransactionsActivity : AppCompatActivity() {
                 val transactionClicked = transactions[position]
                 showUpdateTransactionDialog(transactionClicked, position)
             }
+
+            setOnCreateContextMenuListener { menu, _, _ ->
+                menu.add(Menu.NONE, 1, Menu.NONE, "Remover")
+            }
         }
 
+    }
+
+    override fun onContextItemSelected(item: MenuItem?): Boolean {
+
+        val idMenu = item?.itemId
+        if (idMenu == 1){
+
+            val menuInfo = item.menuInfo as AdapterView.AdapterContextMenuInfo
+            val positionTransaction = menuInfo.position
+            remove(positionTransaction)
+
+        }
+
+        return super.onContextItemSelected(item)
+    }
+
+    private fun remove(position: Int) {
+        transactions.removeAt(position)
+        updateTransactions()
     }
 
     private fun showUpdateTransactionDialog(
